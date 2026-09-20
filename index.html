@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Freshers' guide</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="logo" href="#home">Freshers' guide</a>
+    <button class="menu-button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav">
+      <a href="#abuot">About</a>
+      <a href="#events">Events</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contact">Contact</a>
+      <button class="theme-toggle" aria-label="Toggle dark mode">Dark mode</button>
+    </nav>
+  </header>
+
+  <section id="home" class="hero">
+    <h1>Welcome to campus</h1>
+    <p>Everything you need for your first semester, in one place.</p>
+    <p class="countdown" id="countdown"></p>
+  </section>
+
+  <main>
+    <section id="about">
+      <h2>About</h2>
+      <p>This site is run by students. If something is wrong or missing, open an issue or a pull request on GitHub.</p>
+    </section>
+
+    <section id="events">
+      <h2>Events</h2>
+      <div class="filters" role="group" aria-label="Filter events">
+        <button class="filter active" data-type="All">All</button>
+        <button class="filter" data-type="Workshop">Workshops</button>
+        <button class="filter" data-type="Contest">Contests</button>
+        <button class="filter" data-type="Social">Social</button>
+      </div>
+      <ul class="events" id="event-list"></ul>
+    </section>
+
+    <section id="faq">
+      <h2>FAQ</h2>
+      <details>
+        <summary>Where is the library?</summary>
+        <p>Ground floor of the main building, open 8 am to 8 pm on weekdays.</p>
+      </details>
+      <details>
+        <summary>How do I get my ID card?</summary>
+        <p>The admin office hands them out in the first week. Bring your admission letter.</p>
+      </details>
+      <details>
+        <summary>Is there Wi-Fi?</summary>
+        <p>Yes. Log in with your college email. Ask the IT desk if it doesn't work.</p>
+      </details>
+    </section>
+  </main>
+
+  <footer id="contact">
+    <p>Questions? Ask in the freshers' group, or email the student council.</p>
+  </footer>
+
+  <script src="events.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

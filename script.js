@@ -24,6 +24,7 @@ themeToggle.addEventListener("click", () => {
 
 // Events
 const list = document.getElementById("event-list");
+let EVENTS = [];
 
 function formatDate(event) {
   const date = new Date(`${event.date}T${event.time}`);
@@ -53,7 +54,20 @@ document.querySelectorAll(".filter").forEach((button) => {
   });
 });
 
-renderEvents("All");
+fetch("events.json")
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error("Failed to load events");
+    }
+    return response.json();
+  })
+  .then((events) => {
+    EVENTS = events;
+    renderEvents("All");
+  })
+  .catch(() => {
+    list.innerHTML = "<li>Events could not be loaded right now.</li>";
+  });
 
 // Countdown to the next event
 function updateCountdown() {

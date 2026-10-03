@@ -31,19 +31,82 @@ function formatDate(event) {
   return date.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" }) + ", " + event.time;
 }
 
+function downloadCalendarEvent(event) {
+  const start = new Date(`${event.date}T${event.time}`);
+  const end = new Date(start.getTime() + 60 * 60 * 1000);
+
+  const formatICSDate = (date) => {
+    const pad = (value) => String(value).padStart(2, "0");
+
+    return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}T${pad(date.getHours())}${pad(date.getMinutes())}00`;
+  };
+
+  const escapeICS = (value) =>
+    String(value)
+      .replace(/\\/g, "\\\\")
+      .replace(/;/g, "\\;")
+      .replace(/,/g, "\\,")
+      .replace(/\r?\n/g, "\\n");
+
+  const ics = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Campus Landing//Events//EN",
+    "BEGIN:VEVENT",
+    `DTSTART:${formatICSDate(start)}`,
+    `DTEND:${formatICSDate(end)}`,
+    `SUMMARY:${escapeICS(event.title)}`,
+    `LOCATION:${escapeICS(event.place)}`,
+    `DESCRIPTION:${escapeICS(event.description)}`,
+    "END:VEVENT",
+    "END:VCALENDAR"
+  ].join("\r\n");
+
+  const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = `${event.title.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}.ics`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  URL.revokeObjectURL(url);
+}
+
 function renderEvents(type) {
   const now = new Date();
-  list.innerHTML = EVENTS
+  list.replaceChildren();
+
+  EVENTS
     .filter((e) => type === "All" || e.type === type)
-    .map((e) => {
+    .forEach((e) => {
       const past = new Date(`${e.date}T${e.time}`) < now;
-      return `<li class="${past ? "past" : ""}">
-        <h3>${e.title}</h3>
-        <div class="meta">${formatDate(e)} · ${e.place} · ${e.type}</div>
-        <p>${e.description}</p>
-      </li>`;
-    })
-    .join("");
+
+      const item = document.createElement("li");
+      item.className = past ? "past" : "";
+
+      const title = document.createElement("h3");
+      title.textContent = e.title;
+
+      const meta = document.createElement("div");
+      meta.className = "meta";
+      meta.textContent = `${formatDate(e)} · ${e.place} · ${e.type}`;
+
+      const description = document.createElement("p");
+      description.textContent = e.description;
+
+      const calendarButton = document.createElement("button");
+      calendarButton.type = "button";
+      calendarButton.textContent = "Add to calendar";
+      calendarButton.addEventListener("click", () => {
+        downloadCalendarEvent(e);
+      });
+
+      item.append(title, meta, description, calendarButton);
+      list.appendChild(item);
+    });
 }
 
 document.querySelectorAll(".filter").forEach((button) => {
@@ -64,19 +127,34 @@ fetch("events.json")
   .then((events) => {
     EVENTS = events;
     renderEvents("All");
+    updateCountdown();
   })
   .catch(() => {
     list.innerHTML = "<li>Events could not be loaded right now.</li>";
   });
 
+setInterval(updateCountdown, 60000);
+
 // Countdown to the next event
 function updateCountdown() {
-  const next = EVENTS[0];
-  const ms = new Date(`${next.date}T${next.time}`) - new Date();
+  const now = new Date();
+  const next = EVENTS
+    .map((event) => ({
+      event,
+      date: new Date(`${event.date}T${event.time}`)
+    }))
+    .filter(({ date }) => date > now)
+    .sort((a, b) => a.date - b.date)[0];
+
+  if (!next) {
+    document.getElementById("countdown").textContent = "No upcoming events.";
+    return;
+  }
+
+  const ms = next.date - now;
   const days = Math.floor(ms / 86400000);
   const hours = Math.floor((ms % 86400000) / 3600000);
-  document.getElementById("countdown").textContent = `${next.title} in ${days} days, ${hours} hours`;
-}
 
-updateCountdown();
-setInterval(updateCountdown, 60000);
+  document.getElementById("countdown").textContent =
+    `${next.event.title} in ${days} days, ${hours} hours`;
+}

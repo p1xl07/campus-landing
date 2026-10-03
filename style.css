@@ -62,7 +62,11 @@ section { padding: 28px 0; }
 .events h3 { margin: 0; font-size: 1.05rem; }
 .events .meta { color: var(--muted); font-size: .9rem; }
 .events p { margin: 6px 0 0; }
-.events .past { opacity: .5; }
+.events .past h3,
+.events .past p,
+.events .past button {
+  color: var(--muted);
+}
 
 details { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; }
 summary { cursor: pointer; font-weight: 600; }

@@ -14,7 +14,7 @@ function setTheme(theme) {
   themeToggle.textContent = theme === "dark" ? "Light mode" : "Dark mode";
 }
 
-setTheme(localStorage.getItem("Theme") || "light");
+setTheme(localStorage.getItem("theme") || "light");
 
 themeToggle.addEventListener("click", () => {
   const theme = document.documentElement.classList.contains("dark") ? "light" : "dark";

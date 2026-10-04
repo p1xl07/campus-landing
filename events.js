@@ -5,6 +5,7 @@ const EVENTS = [
   { title: "Hacktoberfest begins", type: "Social", date: "2026-10-01", time: "09:00", place: "Online", description: "A month of open-source contributions." },
   { title: "Intro to competitive programming", type: "Workshop", date: "2026-10-10", time: "16:00", place: "Seminar hall", description: "How contests work and how to practise." },
   { title: "Monthly coding contest", type: "Contest", date: "2026-10-17", time: "18:00", place: "Online", description: "Two hours, five problems, prizes for the top three." },
+  { title: "Robotics workshop", type: "Workshop", date: "2026-10-20", time: "16:00", place: "Lab 2", description: "Build a line follower in two hours." },
   { title: "Club fair", type: "Social", date: "2026-10-24", time: "11:00", place: "Quadrangle", description: "Every club in one place. Sign up for as many as you like." },
   { title: "24-hour hackathon", type: "Contest", date: "2026-11-14", time: "10:00", place: "Innovation centre", description: "Teams of up to four. Food provided." },
 ];

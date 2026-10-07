@@ -142,19 +142,24 @@ fetch("events.json")
 
 setInterval(updateCountdown, 60000);
 
+//function to find the next event in countdown
+function nextEvent(){
+  return EVENTS.find(event => new Date(`${event.date}T${event.time}`) > new Date()) || null;
+}
+
 // Countdown to the next event
 function updateCountdown() {
   const now = new Date();
   const next = EVENTS
-    .map((event) => ({
-      event,
-      date: new Date(`${event.date}T${event.time}`)
-    }))
-    .filter(({ date }) => date > now)
-    .sort((a, b) => a.date - b.date)[0];
+      .map((event) => ({
+        event,
+        date: new Date(`${event.date}T${event.time}`)
+      }))
+      .filter(({ date }) => date > now)
+      .sort((a, b) => a.date - b.date)[0];
 
   if (!next) {
-    document.getElementById("countdown").textContent = "No upcoming events.";
+    document.getElementById("countdown").textContent = "No upcoming events";
     return;
   }
 

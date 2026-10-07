@@ -8,6 +8,13 @@ menuButton.addEventListener("click", () => {
   menuButton.setAttribute("aria-expanded", open);
 });
 
+nav.querySelectorAll("a").forEach((link) => {
+  link.addEventListener("click", () => {
+    nav.classList.remove("open");
+    menuButton.setAttribute("aria-expanded", "false");
+  });
+});
+
 // Dark mode
 function setTheme(theme) {
   document.documentElement.classList.toggle("dark", theme === "dark");

@@ -4,16 +4,31 @@ A one-page guide for first-year students: upcoming events, a FAQ and contacts. P
 
 ## Running it
 
-Open `index.html` in a browser. That's it.
+Because the page loads events from `events.json`, it needs to be served over HTTP.
+
+From the project directory, run:
+
+```bash
+python -m http.server 8000
+```
+
+Then open `http://localhost:8000/` in your browser.
 
 The live version is published with GitHub Pages from the `main` branch, so merged changes show up there within a couple of minutes.
 
 ## Adding an event
 
-Add an entry to `events.js`:
+Add an entry to `events.json`:
 
-```js
-{ title: "Robotics workshop", type: "Workshop", date: "2026-10-20", time: "16:00", place: "Lab 2", description: "Build a line follower in two hours." },
+```json
+{
+  "title": "Robotics workshop",
+  "type": "Workshop",
+  "date": "2026-10-20",
+  "time": "16:00",
+  "place": "Lab 2",
+  "description": "Build a line follower in two hours."
+}
 ```
 
 `type` is `Workshop`, `Contest` or `Social`.
@@ -32,7 +47,7 @@ Add an entry to `events.js`:
 - `index.html`: the page
 - `style.css`: styles, including dark mode and the mobile layout
 - `script.js`: menu, dark mode, events list, countdown
-- `events.js`: the list of events
+- `events.json`: the list of events
 
 ## Contributing
 

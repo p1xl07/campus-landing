@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>About — Freshers' guide</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<header class="site-header" role="banner">
+  <button class="hamburger" aria-label="Open navigation" aria-expanded="false" aria-controls="nav-drawer" onclick="openDrawerFromButton(this)"><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span></button>
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Switch theme" aria-pressed="false">☀</button>
+</header>
+<div class="drawer-overlay" onclick="closeDrawer()" aria-hidden="true"></div>
+<aside class="drawer" id="nav-drawer" role="navigation" aria-label="Primary" aria-modal="false" aria-hidden="true" hidden>
+  <nav><ul><li><a href="index.html">Home</a></li><li><a href="about.html" class="active">About</a></li><li><a href="events.html">Events</a></li><li><a href="faq.html">FAQ</a></li><li><a href="contact.html">Contact</a></li></ul></nav>
+</aside>
+
+<main class="page-body" role="main">
+  <h1 class="page-title">About</h1>
+  <p>This site is run by students. If something is wrong or missing, open an issue or a pull request on GitHub.</p>
+  <p>We built this guide to make first-year university life a little less overwhelming. The events, answers, and contacts here come from the student body — not from administration — because the people closest to the experience understand it best.</p>
+  <p>It is open-source and maintained by volunteers. Contributions of any kind — corrections, new events, improved copy — are welcome.</p>
+</main>
+
+<footer class="site-footer" role="contentinfo"><p>Freshers' guide — student-run for first-year students. MIT licensed.</p></footer>
+
+<script>
+  const drawer=document.getElementById('nav-drawer'),overlay=document.querySelector('.drawer-overlay');
+  function openDrawerFromButton(btn){drawer.classList.add('open');drawer.removeAttribute('hidden');drawer.setAttribute('aria-modal','true');drawer.setAttribute('aria-hidden','false');overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');btn.setAttribute('aria-expanded','true');const first=drawer.querySelector('a');if(first)setTimeout(()=>first.focus(),20);document.addEventListener('keydown',escDrawer);}
+  function closeDrawer(){drawer.classList.remove('open');drawer.setAttribute('hidden','');drawer.setAttribute('aria-modal','false');drawer.setAttribute('aria-hidden','true');overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true');document.querySelector('.hamburger').setAttribute('aria-expanded','false');document.removeEventListener('keydown',escDrawer);}
+  function escDrawer(e){if(e.key==='Escape')closeDrawer();}
+  const THEME_KEY='campus-landing-theme';
+  function toggleTheme(){const root=document.documentElement;const isDark=root.classList.contains('dark');const next=isDark?'light':'dark';root.classList.toggle('dark',next==='dark');localStorage.setItem(THEME_KEY,next);const btn=document.querySelector('.theme-toggle');if(btn){btn.innerHTML=next==='dark'?'☾':'☀';btn.setAttribute('aria-pressed',next==='dark'?'true':'false');btn.setAttribute('aria-label',next==='dark'?'Switch to light mode':'Switch to dark mode');}}
+  (function initTheme(){const saved=localStorage.getItem(THEME_KEY);const prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;const theme=saved||(prefersDark?'dark':'light');document.documentElement.classList.toggle('dark',theme==='dark');const btn=document.querySelector('.theme-toggle');if(btn){btn.innerHTML=theme==='dark'?'☾':'☀';btn.setAttribute('aria-pressed',theme==='dark'?'true':'false');btn.setAttribute('aria-label',theme==='dark'?'Switch to light mode':'Switch to dark mode');}})();
+</script>
+</body>
+</html>

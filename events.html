@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Events — Freshers' guide</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<header class="site-header" role="banner">
+  <button class="hamburger" aria-label="Open navigation" aria-expanded="false" aria-controls="nav-drawer" onclick="openDrawerFromButton(this)"><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span></button>
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Switch theme" aria-pressed="false">☀</button>
+</header>
+<div class="drawer-overlay" onclick="closeDrawer()" aria-hidden="true"></div>
+<aside class="drawer" id="nav-drawer" role="navigation" aria-label="Primary" aria-modal="false" aria-hidden="true" hidden>
+  <nav><ul><li><a href="index.html">Home</a></li><li><a href="about.html">About</a></li><li><a href="events.html" class="active">Events</a></li><li><a href="faq.html">FAQ</a></li><li><a href="contact.html">Contact</a></li></ul></nav>
+</aside>
+
+<main class="events-section" role="main">
+  <h1 class="page-title">Events</h1>
+  <p style="max-width:640px;color:var(--text-secondary);">Workshops, contests, and social gatherings for first-year students.</p>
+
+  <div class="filters" role="group" aria-label="Filter events">
+    <button class="filter active" data-type="All">All</button>
+    <button class="filter" data-type="Workshop">Workshops</button>
+    <button class="filter" data-type="Contest">Contests</button>
+    <button class="filter" data-type="Social">Social</button>
+  </div>
+
+  <div id="next-event" style="margin: 48px 0 32px; padding-bottom: 32px; border-bottom: 1px solid var(--border);" aria-label="Next upcoming event"></div>
+  <div id="event-list"></div>
+</main>
+
+<footer class="site-footer" role="contentinfo"><p>Freshers' guide — student-run for first-year students. MIT licensed.</p></footer>
+
+<script>
+  const drawer=document.getElementById('nav-drawer'),overlay=document.querySelector('.drawer-overlay');
+  function openDrawerFromButton(btn){drawer.classList.add('open');drawer.removeAttribute('hidden');drawer.setAttribute('aria-modal','true');drawer.setAttribute('aria-hidden','false');overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');btn.setAttribute('aria-expanded','true');const first=drawer.querySelector('a');if(first)setTimeout(()=>first.focus(),20);document.addEventListener('keydown',escDrawer);}
+  function closeDrawer(){drawer.classList.remove('open');drawer.setAttribute('hidden','');drawer.setAttribute('aria-modal','false');drawer.setAttribute('aria-hidden','true');overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true');document.querySelector('.hamburger').setAttribute('aria-expanded','false');document.removeEventListener('keydown',escDrawer);}
+  function escDrawer(e){if(e.key==='Escape')closeDrawer();}
+  const THEME_KEY='campus-landing-theme';
+  function toggleTheme(){const root=document.documentElement;const isDark=root.classList.contains('dark');const next=isDark?'light':'dark';root.classList.toggle('dark',next==='dark');localStorage.setItem(THEME_KEY,next);const btn=document.querySelector('.theme-toggle');if(btn){btn.innerHTML=next==='dark'?'☾':'☀';btn.setAttribute('aria-pressed',next==='dark'?'true':'false');btn.setAttribute('aria-label',next==='dark'?'Switch to light mode':'Switch to dark mode');}}
+  (function initTheme(){const saved=localStorage.getItem(THEME_KEY);const prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;const theme=saved||(prefersDark?'dark':'light');document.documentElement.classList.toggle('dark',theme==='dark');const btn=document.querySelector('.theme-toggle');if(btn){btn.innerHTML=theme==='dark'?'☾':'☀';btn.setAttribute('aria-pressed',theme==='dark'?'true':'false');btn.setAttribute('aria-label',theme==='dark'?'Switch to light mode':'Switch to dark mode');}})();
+
+  /* Events logic preserved from original script.js */
+  const list = document.getElementById('event-list');
+  let EVENTS = [];
+  function formatDate(event) {
+    const d = new Date(event.date + 'T' + event.time);
+    return d.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' }) + ', ' + event.time;
+  }
+  function downloadCalendarEvent(event) {
+    const start = new Date(event.date + 'T' + event.time);
+    const end = new Date(start.getTime() + 60 * 60 * 1000);
+    const pad = v => String(v).padStart(2, '0');
+    const fmt = d => `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
+    const esc = s => String(s).replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\r?\n/g,'\\n');
+    const ics = [
+      'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Campus Landing//Events//EN',
+      'BEGIN:VEVENT',`DTSTART:${fmt(start)}`,`DTEND:${fmt(end)}`,
+      `SUMMARY:${esc(event.title)}`,`LOCATION:${esc(event.place)}`,`DESCRIPTION:${esc(event.description)}`,
+      'END:VEVENT','END:VCALENDAR'
+    ].join('\r\n');
+    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = event.title.replace(/[^a-z0-9]+/gi,'-').toLowerCase() + '.ics';
+    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  }
+  function renderEvents(type) {
+    const now = new Date();
+    if (!list) return;
+    list.innerHTML = '';
+    EVENTS.filter(e => type === 'All' || e.type === type).forEach(e => {
+      const past = new Date(e.date + 'T' + e.time) < now;
+      const card = document.createElement('article');
+      card.className = 'event-card' + (past ? ' past' : '');
+      card.innerHTML = `<h3>${escapeHtml(e.title)}</h3>
+        <p class="event-meta">${escapeHtml(formatDate(e))} · ${escapeHtml(e.place)} · ${escapeHtml(e.type)}</p>
+        <p class="event-desc">${escapeHtml(e.description)}</p>
+        <button class="add-calendar">${escapeHtml('Add to calendar')}</button>`;
+      card.querySelector('.add-calendar').addEventListener('click', () => downloadCalendarEvent(e));
+      list.appendChild(card);
+    });
+  }
+  function escapeHtml(s) {
+    const d = document.createElement('div'); d.textContent = s; return d.innerHTML;
+  }
+  function updateCountdown() {
+    const now = new Date();
+    const next = EVENTS.map(ev => ({ ev, d: new Date(ev.date + 'T' + ev.time) })).filter(({d}) => d > now).sort((a,b) => a.d - b.d)[0];
+    const el = document.getElementById('next-event');
+    if (!el) return;
+    if (!next) { el.innerHTML = '<h2 style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.15em;color:var(--text-muted);margin:0 0 6px;">Next event</h2><p style="margin:0;color:var(--text-secondary);">No upcoming events.</p>'; return; }
+    const ms = next.d - now; const days = Math.floor(ms/86400000); const hours = Math.floor((ms%86400000)/3600000);
+    const d = new Date(next.ev.date + 'T' + next.ev.time);
+    const fmt = d.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' }) + ' · ' + next.ev.time;
+    el.innerHTML = '<h2 style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.2em;color:var(--text-muted);margin:0 0 10px;font-weight:600;">Next event</h2>'+
+      '<h3 style="font-size:1.4rem;font-weight:600;letter-spacing:-0.03em;margin:0 0 8px;color:var(--text);">' + escapeHtml(next.ev.title) + '</h3>' +
+      '<p style="margin:0 0 6px;color:var(--text-secondary);font-size:0.95rem;">' + escapeHtml(fmt) + ' · ' + escapeHtml(next.ev.place) + '</p>' +
+      '<p style="margin:0 0 10px;color:var(--text-muted);font-size:0.9rem;">' + escapeHtml(next.ev.type) + '</p>' +
+      '<p style="margin:0;font-size:0.85rem;color:var(--accent);font-weight:500;">In ' + days + ' days, ' + hours + ' hours</p>';
+  }
+  document.querySelectorAll('.filter').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelector('.filter.active').classList.remove('active');
+      btn.classList.add('active');
+      renderEvents(btn.dataset.type);
+    });
+  });
+  fetch('events.json').then(r => { if(!r.ok) throw new Error('Failed'); return r.json(); })
+    .then(events => { EVENTS = events; renderEvents('All'); updateCountdown(); })
+    .catch(() => { if(list) list.innerHTML = '<p>Events could not be loaded.</p>'; });
+  setInterval(updateCountdown, 60000);
+</script>
+</body>
+</html>

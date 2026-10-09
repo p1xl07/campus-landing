@@ -1,6 +1,6 @@
 # campus-landing
 
-A one-page guide for first-year students: upcoming events, a FAQ and contacts. Plain HTML, CSS and JavaScript, with no build step.
+A multi-page guide for first-year students: home, about, events, FAQ and contact. Plain HTML, CSS and JavaScript, with no build step.
 
 ## Running it
 
@@ -35,19 +35,24 @@ Add an entry to `events.json`:
 
 ## How it's supposed to work
 
-- Every link in the top bar scrolls to its section.
-- On a phone-sized screen the links move into a menu behind the ☰ button. Tapping a link closes the menu.
-- Dark mode is remembered: reload the page and it stays on.
-- The countdown under the heading is for the next event that hasn't happened yet. If there are none, it says so.
-- Past events are faded out. The filter buttons show only that type of event.
-- Event titles and descriptions are shown as plain text. If one contains HTML, it's displayed, not run.
+- The landing page welcomes students with a campus image and links to the About, Events, FAQ and Contact pages.
+- The hamburger button opens a navigation drawer, allowing users to move between pages.
+- Light and dark themes are available, and the selected theme is remembered across page reloads.
+- The Events page displays events from `events.json` and provides event filtering.
+- Past events are visually distinguished from upcoming events.
+- Event titles and descriptions are displayed as text rather than executed as HTML.
 
 ## Code
 
-- `index.html`: the page
-- `style.css`: styles, including dark mode and the mobile layout
-- `script.js`: menu, dark mode, events list, countdown
+- `index.html`: home / landing page
+- `about.html`: about page
+- `events.html`: events directory and event filtering
+- `faq.html`: FAQ page
+- `contact.html`: contact page
+- `style.css`: shared styles, light/dark themes, navigation drawer, and responsive layout
+- `script.js`: original events logic, retained for compatibility
 - `events.json`: the list of events
+- `assets/img/campus-landscape.png`: landing page hero image
 
 ## Contributing
 

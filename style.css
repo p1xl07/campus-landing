@@ -86,8 +86,8 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 1;
-  filter: none;
+  opacity: 0.55;
+  filter: grayscale(0.25) contrast(1.05);
   z-index: 0;
   pointer-events: none;
 }
@@ -185,10 +185,14 @@ body {
   text-align: center;
 }
 .hero-full h1 {
-  font-size: clamp(3rem, 8vw, 6rem); font-weight: 700; line-height: 0.92;
-  letter-spacing: -0.06em; margin: 0 0 28px;
+  font-size: clamp(3rem, 6.5vw, 5.5rem);
+  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+  max-width: 900px;
+  margin: 0 auto 24px;
   color: #f6f6f8;
-  text-shadow: 0 2px 30px rgba(0,0,0,0.3);
+  text-shadow: 0 2px 30px rgba(0, 0, 0, 0.3);
 }
 .hero-full p.sub {
   font-size: clamp(1.05rem, 2vw, 1.35rem); color: rgba(255,255,255,0.82);
@@ -202,17 +206,28 @@ body {
 
 /* ---- Exploration links (index after hero) ---- */
 .explore {
-  padding: 120px 32px;
-  max-width: 960px; margin: 0 auto;
+  padding: 88px 32px;
+  max-width: 1120px;
+  margin: 0 auto;
   min-height: calc(100vh - 72px);
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
   align-content: center;
 }
+
 .explore a {
-  display: block; padding: 48px 28px;
-  border: 1px solid var(--border); border-radius: var(--radius);
-  color: var(--text); text-decoration: none; transition: border-color 0.2s ease, background 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 220px;
+  padding: 32px 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  text-decoration: none;
   background: var(--surface);
+  transition: border-color 0.2s ease, background 0.2s ease;
 }
 .explore a:hover {
   border-color: rgba(26,34,165,0.25); background: var(--surface);
@@ -228,7 +243,11 @@ body {
   font-size: 1.5rem; font-weight: 600; letter-spacing: -0.03em; margin: 0;
 }
 .explore .arrow {
-  display: inline-block; margin-top: 14px; font-size: 1.2rem; color: var(--accent);
+  display: inline-block;
+  margin-top: auto;
+  padding-top: 24px;
+  font-size: 1.2rem;
+  color: var(--accent);
   transition: transform 0.2s ease;
 }
 .explore a:hover .arrow { transform: translateX(4px); }
@@ -281,7 +300,7 @@ body {
 }
 .faq-section summary::-webkit-details-marker { display: none; }
 .faq-section summary::after { content: '+'; color: var(--text-muted); font-weight: 300; font-size: 1.2rem; transition: color 0.15s; }
-.faq-section details[open] summary::after { content: 'âˆ’'; }
+.faq-section details[open] summary::after { content: "\2212"; }
 .faq-section details p { padding-bottom: 20px; color: var(--text-secondary); max-width: 540px; }
 
 /* ---- Contact ---- */
